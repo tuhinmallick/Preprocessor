@@ -38,22 +38,13 @@ def cat_summary(dataframe, col_name, plot=False):
     if dataframe[col_name].dtypes == "bool":
         dataframe[col_name] = dataframe[col_name].astype(int)
 
-        print(pd.DataFrame({col_name: dataframe[col_name].value_counts(),
-                            "Ratio": 100 * dataframe[col_name].value_counts() / len(dataframe)}))
-        print("##########################################")
+    print(pd.DataFrame({col_name: dataframe[col_name].value_counts(),
+                        "Ratio": 100 * dataframe[col_name].value_counts() / len(dataframe)}))
+    print("##########################################")
 
-        if plot:
-            sns.countplot(x=dataframe[col_name], data=dataframe)
-            plt.show(block=True)
-
-    else:
-        print(pd.DataFrame({col_name: dataframe[col_name].value_counts(),
-                            "Ratio": 100 * dataframe[col_name].value_counts() / len(dataframe)}))
-        print("##########################################")
-
-        if plot:
-            sns.countplot(x=dataframe[col_name], data=dataframe)
-            plt.show(block=True)
+    if plot:
+        sns.countplot(x=dataframe[col_name], data=dataframe)
+        plt.show(block=True)
 
 
 # Numerical Variable Analysis
@@ -99,15 +90,23 @@ def grab_col_names(dataframe, cat_th=10, car_th=20):
     """
 
     # cat_cols, cat_but_car
-    cat_cols = [col for col in dataframe.columns if str(dataframe[col].dtypes) in ["category", "object", "bool"]]
+    cat_cols = [
+        col
+        for col in dataframe.columns
+        if str(dataframe[col].dtypes) in {"category", "object", "bool"}
+    ]
 
     num_but_cat = [col for col in dataframe.columns if
                    dataframe[col].nunique() < 10 and dataframe[col].dtypes in ["int", "float"]]
 
-    cat_but_car = [col for col in dataframe.columns if
-                   dataframe[col].nunique() > 20 and str(dataframe[col].dtypes) in ["category", "object"]]
+    cat_but_car = [
+        col
+        for col in dataframe.columns
+        if dataframe[col].nunique() > 20
+        and str(dataframe[col].dtypes) in {"category", "object"}
+    ]
 
-    cat_cols = cat_cols + num_but_cat
+    cat_cols += num_but_cat
     cat_cols = [col for col in cat_cols if col not in cat_but_car]
 
     num_cols = [col for col in dataframe.columns if dataframe[col].dtypes in ["int", "float"]]
