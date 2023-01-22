@@ -42,11 +42,12 @@ def check_outlier(dataframe, col_name):
 
     low_limit, up_limit = outlier_thresholds(dataframe, col_name)
 
-    if dataframe[(dataframe[col_name] > up_limit) | (dataframe[col_name] < low_limit)].any(axis=None):
-        return True
-
-    else:
-        return False
+    return bool(
+        dataframe[
+            (dataframe[col_name] > up_limit)
+            | (dataframe[col_name] < low_limit)
+        ].any(axis=None)
+    )
 
 
 # Capturing Categorical and Numeric Variables and Generalizing Operations
@@ -72,15 +73,23 @@ def grab_col_names(dataframe, cat_th=10, car_th=20):
     """
 
     # cat_cols, cat_but_car
-    cat_cols = [col for col in dataframe.columns if str(dataframe[col].dtypes) in ["category", "object", "bool"]]
+    cat_cols = [
+        col
+        for col in dataframe.columns
+        if str(dataframe[col].dtypes) in {"category", "object", "bool"}
+    ]
 
     num_but_cat = [col for col in dataframe.columns if
                    dataframe[col].nunique() < 10 and dataframe[col].dtypes in ["int", "float"]]
 
-    cat_but_car = [col for col in dataframe.columns if
-                   dataframe[col].nunique() > 20 and str(dataframe[col].dtypes) in ["category", "object"]]
+    cat_but_car = [
+        col
+        for col in dataframe.columns
+        if dataframe[col].nunique() > 20
+        and str(dataframe[col].dtypes) in {"category", "object"}
+    ]
 
-    cat_cols = cat_cols + num_but_cat
+    cat_cols += num_but_cat
 
     cat_cols = [col for col in cat_cols if col not in cat_but_car]
 
@@ -120,8 +129,9 @@ def grab_outliers(dataframe, col_name, index=False):
         print(dataframe[((dataframe[col_name] < low) | (dataframe[col_name] > up))])
 
     if index:
-        outlier_index = dataframe[((dataframe[col_name] < low) | (dataframe[col_name] > up))].index
-        return outlier_index
+        return dataframe[
+            ((dataframe[col_name] < low) | (dataframe[col_name] > up))
+        ].index
 
 
 # Delete outlier value
@@ -138,9 +148,9 @@ def remove_outlier(dataframe, col_name):
 
     low_limit, up_limit = outlier_thresholds(dataframe, col_name)
 
-    df_without_outliers = dataframe[~((dataframe[col_name] < low_limit) | (dataframe[col_name] > up_limit))]
-
-    return df_without_outliers
+    return dataframe[
+        ~((dataframe[col_name] < low_limit) | (dataframe[col_name] > up_limit))
+    ]
 
 
 # re-assignment with thresholds
